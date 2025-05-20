@@ -1,0 +1,1 @@
+C:\Users\gagan\Desktop\personal\Projects\rust_files\sample\target\debug\libsample.rlib: C:\Users\gagan\Desktop\personal\Projects\rust_files\sample\src\lib.rs C:\Users\gagan\Desktop\personal\Projects\rust_files\sample\src\producer_consumer.rs
