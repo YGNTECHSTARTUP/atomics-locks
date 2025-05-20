@@ -1,1 +1,32 @@
-/target
+# Binaries for programs and libraries
+target/
+**/*.rs.bk
+
+# If using Cargo workspaces
+**/target/
+
+# Executables
+*.exe
+*.dll
+*.so
+*.dylib
+
+# MacOS
+.DS_Store
+
+# IDE/editor-specific files
+.idea/
+*.swp
+*.swo
+*.swn
+*.log
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Byebug temp files (Rust or other debuggers)
+*.stackdump
+
+# Backup files
+*~
