@@ -1,4 +1,4 @@
-use std::cell::UnsafeCell;
+use std::{cell::UnsafeCell, sync::atomic::AtomicI16};
 
 pub fn un() {
     struct MyCell<T> {
