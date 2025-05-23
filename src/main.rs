@@ -1,8 +1,4 @@
-use sample::{edp, scheduler::un1};
-
+use sample::mutlock;
 fn main() {
-    // abc()
-    // abb();
-    // un1();
-    edp::ee();
+    mutlock::lc();
 }
