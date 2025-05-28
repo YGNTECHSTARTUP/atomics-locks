@@ -1,4 +1,7 @@
-use sample::mutlock;
+use sample::edp::{a, b};
+
 fn main() {
-    mutlock::lc();
+    a();
+    b()
+    // seq();
 }

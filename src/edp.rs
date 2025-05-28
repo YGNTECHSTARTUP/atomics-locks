@@ -1,8 +1,19 @@
 use std::{
-    sync::atomic::AtomicUsize,
+    sync::{atomic::AtomicUsize, Arc},
     thread,
     time::{Duration, Instant},
 };
+
+pub fn a() {
+    let a = thread::Builder::new()
+        .name("a".into())
+        .stack_size(50 * 1024);
+    println!("{:?}", a);
+}
+pub fn b() {
+    let a = Arc::new(10);
+    println!("{:?}", a);
+}
 
 pub fn ee() {
     fn comp(id: usize) {

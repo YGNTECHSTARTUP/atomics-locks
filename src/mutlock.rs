@@ -7,9 +7,13 @@ pub fn hel() {
 static LOCKED: AtomicBool = AtomicBool::new(false);
 static mut DATA: String = String::new();
 pub fn lc() {
-    for id in 0..100 {
-        thread::spawn(|| f());
-    }
+    thread::scope(|s| {
+        for _ in 0..1000000000 {
+            s.spawn(|| f());
+        }
+    });
+
+    unsafe { println!("FINAL DATA={}", DATA) }
 }
 
 fn f() {
@@ -22,10 +26,10 @@ fn f() {
         )
         .is_ok()
     {
+        println!("BLOCK EXECUTED");
         unsafe {
             DATA.push('!');
         }
-        println!("BLOCK EXECUTED");
         LOCKED.store(false, std::sync::atomic::Ordering::Release);
     };
 }
