@@ -1,7 +1,5 @@
 use std::{
-    sync::{atomic::AtomicUsize, Arc},
-    thread,
-    time::{Duration, Instant},
+    borrow::BorrowMut, cell::{Cell, RefCell}, sync::{atomic::AtomicUsize, Arc}, thread, time::{Duration, Instant}
 };
 
 pub fn a() {
@@ -11,8 +9,9 @@ pub fn a() {
     println!("{:?}", a);
 }
 pub fn b() {
-    let a = Arc::new(10);
-    println!("{:?}", a);
+    let aa = RefCell::new(10);
+    *aa.borrow_mut() += 100;
+    println!("{:?}",aa);
 }
 
 pub fn ee() {
