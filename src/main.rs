@@ -1,7 +1,6 @@
-use sample::edp::{a, b};
+use sample::prac::{ac, aw, dd, ou};
 
 fn main() {
-    a();
-    b()
+    ou();
     // seq();
 }
