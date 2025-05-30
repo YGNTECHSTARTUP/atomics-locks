@@ -1,8 +1,7 @@
+use sample::spinlock::sp;
+
 // use sample::prac::ak;
-
-use sample::prac::aww;
-
 fn main() {
+    sp();
     // ak();
-    aww();
 }
