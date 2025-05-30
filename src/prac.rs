@@ -1,10 +1,11 @@
 use std::{
     collections::VecDeque,
+    ptr::null_mut,
     sync::{
-        atomic::{AtomicBool, AtomicU32, AtomicU64, AtomicUsize},
+        atomic::{fence, AtomicBool, AtomicPtr, AtomicU32, AtomicU64, AtomicUsize},
         Arc, Condvar, Mutex, OnceLock,
     },
-    thread,
+    thread::{self, JoinHandle},
     time::{Duration, Instant},
 };
 
@@ -148,4 +149,114 @@ pub fn ou() {
         }
         LOCKED.store(false, std::sync::atomic::Ordering::Release);
     }
+}
+
+pub fn ptr() {
+    let a = Arc::new(AtomicU32::new(10));
+    for i in 0..100 {
+        let a = Arc::clone(&a);
+        thread::spawn(move || {
+            let current = a.load(std::sync::atomic::Ordering::Acquire);
+            if a.compare_exchange(
+                current,
+                current + 1,
+                std::sync::atomic::Ordering::Acquire,
+                std::sync::atomic::Ordering::Relaxed,
+            )
+            .is_ok()
+            {
+                println!("Updated {current}")
+            }
+        });
+    }
+
+    for i in 0..100 {
+        let a = Arc::clone(&a);
+        thread::spawn(move || {
+            let current = a.load(std::sync::atomic::Ordering::Acquire);
+            println!("Current:{:?}", current)
+        });
+    }
+    thread::sleep(Duration::from_secs(1));
+    println!("{:?}", a.load(std::sync::atomic::Ordering::Acquire))
+}
+
+pub fn lev() {
+    let a: Arc<AtomicU32> = Arc::new(AtomicU32::new(10));
+    let mut handles: Vec<JoinHandle<()>> = vec![];
+    for i in 0..100 {
+        let a = Arc::clone(&a);
+        let handler = thread::spawn(move || {
+            a.fetch_add(20, std::sync::atomic::Ordering::Release);
+        });
+        handles.push(handler);
+    }
+
+    for i in 0..100 {
+        let a = Arc::clone(&a);
+        let handler = thread::spawn(move || {
+            a.fetch_add(120, std::sync::atomic::Ordering::Acquire);
+        });
+        handles.push(handler);
+    }
+    for hand in handles {
+        hand.join().unwrap()
+    }
+
+    let b = a.load(std::sync::atomic::Ordering::Acquire);
+    println!("{:?}", b);
+}
+
+// pub fn az(){
+//     static PTR:AtomicPtr<i32> = AtomicPtr::new(null_mut());
+//     let p = PTR.load(std::sync::atomic::Ordering::Acquire);
+//     if p.is_null(){
+//         let data = Box::into_raw(Box::new(3));
+//       if let Err(e)= PTR.compare_exchange(null_mut(),data,std::sync::atomic::Ordering::Release,std::sync::atomic::Ordering::Acquire){
+//       drop(unsafe {
+//           Box::from_raw(data);
+//     });
+//     println!("hh");
+//   };
+//     }
+// }
+
+pub fn sp() {
+    let a = AtomicBool::new(false);
+}
+
+pub fn ak() {
+    let a = AtomicU32::new(10);
+
+    a.fetch_add(10, std::sync::atomic::Ordering::Release);
+    thread::spawn(move || {
+        let aa = a.load(std::sync::atomic::Ordering::Acquire);
+        println!("{:?}", aa);
+    })
+    .join()
+    .unwrap();
+}
+
+pub fn aww() {
+    static A: AtomicU32 = AtomicU32::new(0);
+
+    static B: AtomicU32 = AtomicU32::new(0);
+    static C: AtomicU32 = AtomicU32::new(0);
+    static D: AtomicU32 = AtomicU32::new(0);
+    thread::spawn(|| {
+        fence(std::sync::atomic::Ordering::Release);
+        A.store(10, std::sync::atomic::Ordering::Relaxed);
+        B.store(20, std::sync::atomic::Ordering::Relaxed);
+        C.store(30, std::sync::atomic::Ordering::Relaxed);
+        D.store(40, std::sync::atomic::Ordering::Relaxed);
+    });
+
+    thread::spawn(|| {
+        A.load(std::sync::atomic::Ordering::Relaxed);
+        B.load(std::sync::atomic::Ordering::Relaxed);
+        C.load(std::sync::atomic::Ordering::Relaxed);
+        D.load(std::sync::atomic::Ordering::Relaxed);
+        fence(std::sync::atomic::Ordering::Acquire);
+        println!("{:?}{:?}{:?}{:?}", A, B, C, D);
+    });
 }

@@ -1,6 +1,8 @@
-use sample::prac::{ac, aw, dd, ou};
+// use sample::prac::ak;
+
+use sample::prac::aww;
 
 fn main() {
-    ou();
-    // seq();
+    // ak();
+    aww();
 }
