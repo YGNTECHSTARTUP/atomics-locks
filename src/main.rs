@@ -1,7 +1,10 @@
-use sample::spinlock::sp;
+use sample::{ar::a, channel::oc};
 
 // use sample::prac::ak;
 fn main() {
-    sp();
+    // cn();
     // ak();
+    // oc();
+    a();
+    // spl();
 }
